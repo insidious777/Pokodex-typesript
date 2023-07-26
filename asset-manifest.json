@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/Pokodex-typesript/static/css/main.71d43510.css",
+    "main.js": "/Pokodex-typesript/static/js/main.24e42a23.js",
+    "static/js/787.e549b1fe.chunk.js": "/Pokodex-typesript/static/js/787.e549b1fe.chunk.js",
+    "index.html": "/Pokodex-typesript/index.html",
+    "main.71d43510.css.map": "/Pokodex-typesript/static/css/main.71d43510.css.map",
+    "main.24e42a23.js.map": "/Pokodex-typesript/static/js/main.24e42a23.js.map",
+    "787.e549b1fe.chunk.js.map": "/Pokodex-typesript/static/js/787.e549b1fe.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.71d43510.css",
+    "static/js/main.24e42a23.js"
+  ]
+}
