@@ -1,0 +1,53 @@
+.currentPokemon{
+    width: 60%;
+    margin-bottom: 5px;
+}
+
+.currentPokemonImg{
+    width:100%;
+}
+.currentPokemonName{
+    font-weight: 700;
+    font-size: 20px;
+    margin-top: 0px;
+}
+.currentPokemonTypes{
+    border: deepskyblue 2px solid;
+    border-radius: 20px;
+    display: flex;
+    flex-direction: row;
+}
+.currentPokemonType{
+    margin-left: 5px;
+}
+.currentPokemonStats{
+    display: flex;
+    flex-direction: row;
+    border: deepskyblue 2px solid;
+    border-radius: 20px;
+
+}
+.currentPokemonStat{
+    margin-left: 5px;
+}
+
+@media screen and  (max-width: 680px) {
+   .currentPokemon{
+        width: 100%;
+        margin-bottom: 5px;
+       display: flex;
+       flex-direction: column;
+       align-items: center;
+    }
+    .currentPokemonImg{
+        width:60%;
+    }
+    .currentPokemonStatsContainer{
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: center;
+        font-size:12px;
+    }
+
+}

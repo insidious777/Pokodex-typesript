@@ -1,0 +1,23 @@
+.pokemonImage{
+    width: 70%;
+}
+.pokemonName{
+    font-size: 16px;
+    font-weight: 700;
+}
+.pokemonTypes{
+    display: flex;
+    flex-direction: row;
+}
+.pokemonType{
+    padding: 0 5px 10px;
+}
+
+@media screen and (max-width: 360px) {
+   .pokemonTypes {
+       font-size: 14px;
+   }
+    .pokemonName{
+        font-size: 14px;
+    }
+}

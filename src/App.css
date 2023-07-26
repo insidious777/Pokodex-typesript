@@ -1,38 +1,99 @@
-.App {
-  text-align: center;
+.container{
+  display: flex;
+  flex-direction: row;
 }
-
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+.pokemonsList{
+  margin-top: 20px;
+  display: flex;
+  flex-wrap: wrap;
+  width:620px;
+  justify-content: center;
 }
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+.pokemonCard{
+  margin: 0 15px 10px;
+  width:25%;
+  border:1px solid black;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
+  cursor: pointer;
+}
+
+.disabled{
+  display: none;
+}
+.active{
+  height: 40%;
+  margin: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border-radius: 20px;
+  width:350px;
+  background: cyan;
+}
+.loadButtons{
+  width:40%;
+  display: flex;
+  justify-content: space-between;
+}
+.navButton{
+  border-radius: 40px;
+  height: 30px;
+  width:70px;
+  background-color: deepskyblue;
   color: white;
-}
+  border: none;
+  cursor: pointer;
+}:disabled{
+   background: cyan;
+ }
 
-.App-link {
-  color: #61dafb;
-}
-
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
+@media screen and  (max-width: 360px) {
+  .navButton{
+    font-size: 10px;
+    height: 20px;
+    width: 50px;
   }
-  to {
-    transform: rotate(360deg);
+  .pokemonCard{
+    width:30%;
+  }
+  .active{
+    justify-content: center;
+    width:60%;
+    max-height: 60%;
+    height: auto;
+  }
+  .pokemonsList{
+    width: auto;
+  }
+  .container{
+    flex-direction: column-reverse;
+    justify-content: center;
+    align-items: center;
+  }
+
+}
+
+@media screen and (min-width: 361px) and (max-width: 680px) {
+
+  .pokemonsList{
+    width: auto;
+    position: absolute;
+    z-index: 1;
+  }
+  .pokemonCard{
+    width:30%;
+  }
+  .container{
+    justify-content: center;
+  }
+  .active{
+    position: absolute;
+    z-index: 2;
+    width:60%;
+    max-height: 60%;
+    height: auto;
+    margin-top: 20px;
   }
 }
