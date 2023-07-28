@@ -1,122 +1,95 @@
 import React, {useEffect, useState} from 'react';
 import './App.css';
 import axios from "axios";
-
-import PokemonsUrlList from "./Interfaces/pokemonsUrlList";
-
-import ShowPokemon from "./Components/showPokemons";
-import ShowCurrentPokemon from "./Components/showCurrentPokemon";
-import Pokemon from "./Interfaces/pokemon";
-
+import PokemonUrlList from "./Interfaces/PokemonListItem";
+import PokemonCard from "./Components/PokemonCard";
+import PokemonDetails from "./Components/PokemonDetails";
+import Pokemon from "./Interfaces/Pokemon";
+import PokemonListItem from "./Interfaces/PokemonListItem";
 
 function App() {
-  const [pokemonsUrlList,setPokemonsUrlList]=useState<string[]>(['']);
-  const [arrPokemon,setArrPokemon]=useState<string[]>(['']);
-  const [loaded,setLoaded]=useState<boolean>(false);
-  const [visibility,setVisibility]=useState<boolean>(false);
-  const [currentPokemon,setCurrentPokemon]=useState<Pokemon>({
-    name:'',
-    sprites:{front_default:''},
-    types:[{slot:0,type:{name:''}}],
-    id:0,
-    stats:[{base_stat:0,stat:{name:''}}]
-  });
-  const[first,setFirst]=useState<number>(0);
-  const[second,setSecond]=useState<number>(9);
+    const isMobileWindow = window.innerWidth <= 680;
+    const maxPages = 7;
+    const [pokemonLimit, setPokemonLimit] = useState<number>(isMobileWindow? 4 : 8);
+    const [selectedPokemon, setSelectedPokemon] = useState<Pokemon | null>(null)
+    const [currentPage, setCurrentPage] = useState<number>(1)
+    const [isLoading, setIsLoading] = useState<boolean>(false);
+    const [list, setList] = useState<Pokemon[]>([]);
 
-  const [screenSize, setScreenSize] = useState(getCurrentDimension());
-
-  function getCurrentDimension () {
-    return {
-      width: window.innerWidth,
+    const changePokemonPerPageCount = () => {
+        setPokemonLimit(window.innerWidth <= 680 ? 4 : 8)
     }
-  }
 
-  useEffect(() => {
-    const updateDimension = () => {
-      setScreenSize(getCurrentDimension())
+    useEffect(() => {
+        window.addEventListener('resize', changePokemonPerPageCount);
+        getPokemonList(pokemonLimit, currentPage);
+
+        return () => window.removeEventListener('resize', changePokemonPerPageCount)
+    }, [pokemonLimit, currentPage])
+
+    async function getPokemonDetailInfo({url}: PokemonListItem){
+        const response = await axios.get(url);
+        return response.data
     }
-    window.addEventListener('resize', updateDimension);
-
-    return(() => {
-      window.removeEventListener('resize', updateDimension);
-
-      if(screenSize.width <= 680){
-        setSecond(4)
-      }else{
-        setSecond(8)
-      }
-    })
-  }, [screenSize])
-
-  useEffect (()=>{
-    axios.get(`https://pokeapi.co/api/v2/pokemon/?limit=32`)
-        .then(res => {
-          const pokemons:PokemonsUrlList = res.data;
-          setPokemonsUrlList(pokemons.results.map((e)=>e.url));
-          setArrPokemon(pokemons.results.map((e)=>e.url).slice(first,second))
-          setLoaded(true);
-        })
-  },[arrPokemon]);
-
-  const loadNext=()=>{
-    if(screenSize.width <= 680){
-      setFirst(first+4)
-      setSecond(second+4)
-      setArrPokemon(pokemonsUrlList.slice(first,second))
-    }else{
-      setFirst(first+8)
-      setSecond(second+8)
-      setArrPokemon(pokemonsUrlList.slice(first,second))
+    async function getPokemonList(limit:number, page:number){
+        setIsLoading(true);
+        const offset = page * pokemonLimit;
+        const response = await axios.get(`https://pokeapi.co/api/v2/pokemon/?limit=${limit}&offset=${offset}`);
+        const unresolvedPromises = response.data.results.map(getPokemonDetailInfo);
+        const results = await Promise.all(unresolvedPromises);
+        setList(results)
+        setIsLoading(false);
     }
-  }
 
-  const loadPrev=()=>{
-    if(screenSize.width <= 680){
-      setFirst(first-4)
-      setSecond(second-4)
-      setArrPokemon(pokemonsUrlList.slice(first,second))
-    }else{
-      setFirst(first-8)
-      setSecond(second-8)
-      setArrPokemon(pokemonsUrlList.slice(first,second))
+    const nextPageButtonHandler = () => {
+        if(currentPage < maxPages){
+            setCurrentPage(currentPage + 1)
+        }
     }
-  }
 
+    const prevPageButtonHandler = () => {
+        if(currentPage > 1){
+            setCurrentPage(currentPage - 1)
+        }
+    }
 
-  const showCurrentPokemon = (i:Pokemon) =>{
-    setVisibility(true);
-    setCurrentPokemon(i);
-  }
+    const closePokemonDetails = () => {
+        setSelectedPokemon(null)
+    }
 
-  const closeCurrentPokemon = ()=>{
-    setVisibility(false)
-  }
-
-  return (
-      <>
+    return (
         <div className='container'>
-          <div className='pokemonsList'>
-            {loaded? arrPokemon.map((e,index) =>
-                <ShowPokemon key={index} pokemon={e}
-                             current={showCurrentPokemon}
-                             index={index}
-                />
-            ):<></>}
-            <div className='loadButtons'>
-              <button className='navButton' disabled={second===32} onClick={loadNext}>Next</button>
-              <button className='navButton' disabled={first===0} onClick={loadPrev}>Previous</button>
+            <div className='pokemonsList'>
+                {isLoading ?
+                    <h1>Loading</h1>:
+                    <>
+                        {list.map((p,i: number)=>
+                            <PokemonCard
+                                pokemon={p}
+                                onClick={setSelectedPokemon}
+                                key={i}
+                            />
+                        )}
+                    </>
+                }
+
+                <div className='loadButtons'>
+                    <button className='navButton' disabled={currentPage === 1} onClick={prevPageButtonHandler}>Previous
+                    </button>
+                    <button className='navButton' disabled={currentPage === maxPages} onClick={nextPageButtonHandler}>Next
+                    </button>
+                </div>
             </div>
 
-          </div>
-          <div className={ visibility? 'active':'disabled' } onClick={closeCurrentPokemon}>
-            <ShowCurrentPokemon currentPokemon={currentPokemon}/>
-          </div>
+            {
+                selectedPokemon &&
+                <div className={'active'} onClick={closePokemonDetails}>
+                    <PokemonDetails pokemon={selectedPokemon}/>
+                </div>
+            }
+
         </div>
-
-      </>
-
-  )
+    )
 }
 
 export default App;
